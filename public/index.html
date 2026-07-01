@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Drowsiness Detection</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <span class="icon">🚗</span>
+                <h1>Driver Drowsiness Detection</h1>
+            </div>
+            <div class="status-badge" id="statusBadge">
+                <span class="dot" id="statusDot"></span>
+                <span id="statusText">Disconnected</span>
+            </div>
+        </header>
+
+        <!-- Main Layout -->
+        <div class="main-grid">
+            <!-- Video Feed -->
+            <div class="video-section">
+                <div class="video-wrapper">
+                    <img id="videoFeed" src="" alt="Camera Feed">
+                    <div class="alert-overlay" id="alertOverlay">
+                        <div class="alert-content">
+                            <div class="alert-icon">⚠️</div>
+                            <h2>DROWSINESS ALERT!</h2>
+                            <p>Please pull over and rest immediately!</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Controls -->
+                <div class="controls">
+                    <button id="startBtn" class="btn btn-success">
+                        <span>▶</span> Start Detection
+                    </button>
+                    <button id="stopBtn" class="btn btn-danger" disabled>
+                        <span>⏹</span> Stop
+                    </button>
+                    <button id="resetBtn" class="btn btn-warning">
+                        <span>⟳</span> Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- Metrics Panel -->
+            <div class="metrics-panel">
+                <h3>📊 Real-time Metrics</h3>
+                
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Eye Aspect Ratio (EAR)</div>
+                        <div class="metric-value" id="earValue">0.00</div>
+                        <div class="metric-bar">
+                            <div class="metric-fill" id="earBar" style="width: 0%"></div>
+                        </div>
+                        <div class="metric-status" id="earStatus">Normal</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">PERCLOS</div>
+                        <div class="metric-value" id="perclosValue">0%</div>
+                        <div class="metric-bar">
+                            <div class="metric-fill" id="perclosBar" style="width: 0%"></div>
+                        </div>
+                        <div class="metric-status" id="perclosStatus">Normal</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">Drowsiness Score</div>
+                        <div class="metric-value" id="scoreValue">0%</div>
+                        <div class="metric-bar">
+                            <div class="metric-fill" id="scoreBar" style="width: 0%"></div>
+                        </div>
+                        <div class="metric-status" id="scoreStatus">Safe</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">Eye State</div>
+                        <div class="metric-value" id="eyeStateValue">👁️ Open</div>
+                        <div class="metric-status" id="eyeStateStatus">Normal</div>
+                    </div>
+                </div>
+
+                <!-- Indicators -->
+                <div class="indicators">
+                    <div class="indicator">
+                        <span class="label">😴 Yawn</span>
+                        <span class="value" id="yawnStatus">No</span>
+                    </div>
+                    <div class="indicator">
+                        <span class="label">👤 Head Nod</span>
+                        <span class="value" id="nodStatus">No</span>
+                    </div>
+                    <div class="indicator">
+                        <span class="label">👁️ Blink Rate</span>
+                        <span class="value" id="blinkRate">0/min</span>
+                    </div>
+                    <div class="indicator">
+                        <span class="label">🧠 DL Mode</span>
+                        <span class="value" id="dlStatus">Off</span>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div class="settings">
+                    <h4>⚙️ Settings</h4>
+                    <div class="setting">
+                        <label>EAR Threshold: <span id="earThresholdLabel">0.20</span></label>
+                        <input type="range" id="earThreshold" min="0.10" max="0.35" step="0.01" value="0.20">
+                    </div>
+                    <div class="setting">
+                        <label>Alert Sensitivity: <span id="scoreThresholdLabel">0.45</span></label>
+                        <input type="range" id="scoreThreshold" min="0.30" max="0.70" step="0.05" value="0.45">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logs -->
+        <div class="logs">
+            <h3>📋 System Logs</h3>
+            <div class="log-container" id="logContainer">
+                <div class="log info">🟢 System initialized</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

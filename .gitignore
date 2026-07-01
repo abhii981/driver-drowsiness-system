@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Virtual Environment
+tf_env/
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Large datasets (DON'T UPLOAD)
+data/
+data_preprocessed/
+data_small/
+*.zip
+*.tar.gz
+*.rar
+
+# Model files (large)
+eye_model.h5
+eye_model_fast.h5
+*.h5
+
+# Logs and images
+*.log
+*.png
+*.jpg
+*.jpeg
+
+# Node modules
+node_modules/
+package-lock.json
+
+# OS files
+.DS_Store
+Thumbs.db
