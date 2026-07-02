@@ -1,3 +1,7 @@
+/**
+ * main.js - Frontend logic for Driver Drowsiness Detection
+ */
+
 class DrowsinessApp {
     constructor() {
         // WebSocket
@@ -40,9 +44,22 @@ class DrowsinessApp {
         this.earThresholdLabel = document.getElementById('earThresholdLabel');
         this.scoreThresholdLabel = document.getElementById('scoreThresholdLabel');
         
-        // Audio
-        this.alarmAudio = new Audio('/audio/alarm.mp3');
+        // Audio - Create audio context for fallback
+        this.audioCtx = null;
+        try {
+            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            console.log('Web Audio API not supported');
+        }
+        
+        // Create fallback alarm sound using Web Audio API
+        this.alarmAudio = new Audio();
         this.alarmAudio.loop = true;
+        this.alarmAudio.src = '/audio/alarm.mp3';
+        
+        // Try to load the audio file
+        this.alarmAudio.load();
+        this.alarmAudio.volume = 1.0;
         
         this.init();
     }
@@ -170,14 +187,111 @@ class DrowsinessApp {
             this.statusDot.className = 'dot drowsy';
             this.updateStatus('⚠️ DROWSY', 'drowsy');
             this.addLog('error', '🚨 DROWSINESS ALERT! Please pull over!');
-            this.alarmAudio.play().catch(e => console.log('Audio error:', e));
+            
+            // ============================================
+            // PLAY ALARM SOUND
+            // ============================================
+            this.playAlarmSound();
+            
         } else {
             this.alertOverlay.classList.remove('active');
             this.statusDot.className = 'dot connected';
             this.updateStatus('Alert', 'connected');
+            
+            // Stop sound
+            this.stopAlarmSound();
+        }
+    }
+    
+    playAlarmSound() {
+        console.log('🔊 Playing alarm sound');
+        
+        // Try MP3 first
+        try {
+            this.alarmAudio.currentTime = 0;
+            const playPromise = this.alarmAudio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log('MP3 play error, using Web Audio fallback');
+                    this.playFallbackSound();
+                });
+            }
+        } catch (e) {
+            console.log('Audio error, using Web Audio fallback');
+            this.playFallbackSound();
+        }
+    }
+    
+    playFallbackSound() {
+        // Web Audio API fallback
+        try {
+            if (!this.audioCtx) {
+                this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            // Create oscillator for beep sound
+            const osc = this.audioCtx.createOscillator();
+            const gain = this.audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(this.audioCtx.destination);
+            
+            osc.frequency.value = 880; // A5 note
+            osc.type = 'square';
+            gain.gain.value = 0.3;
+            
+            osc.start();
+            
+            // Stop after 1 second
+            setTimeout(() => {
+                try {
+                    osc.stop();
+                } catch (e) {}
+            }, 1000);
+            
+            // Play multiple beeps
+            setTimeout(() => {
+                try {
+                    const osc2 = this.audioCtx.createOscillator();
+                    const gain2 = this.audioCtx.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(this.audioCtx.destination);
+                    osc2.frequency.value = 880;
+                    osc2.type = 'square';
+                    gain2.gain.value = 0.3;
+                    osc2.start();
+                    setTimeout(() => {
+                        try { osc2.stop(); } catch (e) {}
+                    }, 1000);
+                } catch (e) {}
+            }, 1200);
+            
+            // Third beep
+            setTimeout(() => {
+                try {
+                    const osc3 = this.audioCtx.createOscillator();
+                    const gain3 = this.audioCtx.createGain();
+                    osc3.connect(gain3);
+                    gain3.connect(this.audioCtx.destination);
+                    osc3.frequency.value = 880;
+                    osc3.type = 'square';
+                    gain3.gain.value = 0.3;
+                    osc3.start();
+                    setTimeout(() => {
+                        try { osc3.stop(); } catch (e) {}
+                    }, 1000);
+                } catch (e) {}
+            }, 2400);
+            
+        } catch (e) {
+            console.log('All sound methods failed');
+        }
+    }
+    
+    stopAlarmSound() {
+        try {
             this.alarmAudio.pause();
             this.alarmAudio.currentTime = 0;
-        }
+        } catch (e) {}
     }
     
     updateStatus(text, className) {
@@ -218,13 +332,12 @@ class DrowsinessApp {
         this.isRunning = false;
         this.startBtn.disabled = false;
         this.stopBtn.disabled = true;
-    
+        
         this.ws.send(JSON.stringify({ type: 'stop_detection' }));
         this.addLog('info', '🔴 Detection stopped');
-    
-    // STOP THE ALARM SOUND
-        this.alarmAudio.pause();
-        this.alarmAudio.currentTime = 0;
+        
+        // Stop sound
+        this.stopAlarmSound();
         this.alertOverlay.classList.remove('active');
     }
     
@@ -250,5 +363,6 @@ class DrowsinessApp {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    new DrowsinessApp();
+    const app = new DrowsinessApp();
+    window.app = app;
 });
