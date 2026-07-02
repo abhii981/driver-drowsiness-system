@@ -1,7 +1,4 @@
-"""
-eye_classifier.py - Deep Learning Model for Eye State Classification
-Compatible with TensorFlow 2.21.0
-"""
+
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
@@ -16,7 +13,7 @@ class EyeClassifier:
         self.input_shape = (224, 224, 3)
         
         if model_path and os.path.exists(model_path):
-            print(f"📂 Loading model from {model_path}")
+            print(f" Loading model from {model_path}")
             self.load_model(model_path)
         else:
             print("🆕 Creating new model")
@@ -56,13 +53,13 @@ class EyeClassifier:
         )
         
         self.model = model
-        print("✅ Model created successfully!")
+        print("Model created successfully!")
         self.model.summary()
         return model
     
     def train_model(self, train_data, train_labels, val_data, val_labels, epochs=15):
         """Train the model"""
-        print("🚀 Training model...")
+        print("Training model...")
         
         history = self.model.fit(
             train_data, train_labels,
@@ -72,7 +69,7 @@ class EyeClassifier:
             verbose=1
         )
         
-        print("✅ Training complete!")
+        print("Training complete!")
         return history
     
     def predict_eye_state(self, eye_image):
@@ -105,9 +102,9 @@ class EyeClassifier:
     def save_model(self, filepath):
         """Save the model to file"""
         self.model.save(filepath)
-        print(f"✅ Model saved to {filepath}")
+        print(f"Model saved to {filepath}")
     
     def load_model(self, filepath):
         """Load a saved model"""
         self.model = keras.models.load_model(filepath)
-        print(f"✅ Model loaded from {filepath}")
+        print(f"Model loaded from {filepath}")
