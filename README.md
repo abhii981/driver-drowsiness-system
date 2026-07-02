@@ -1,6 +1,6 @@
 # 🚗 Driver Drowsiness Detection System
 
-> Real-time driver drowsiness detection using Deep Learning (CNN) with a custom web UI and WebSocket streaming.
+Real-time driver drowsiness detection using a fine-tuned CNN model with a web-based interface.
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-2.17+-orange.svg)
@@ -10,261 +10,218 @@
 
 ---
 
-## 📋 Table of Contents
+## 📌 Quick Links
 
-- [Overview](#overview)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Installation](#installation)
-- [How It Works](#how-it-works)
-- [Testing](#testing)
-- [Model Training](#model-training)
-- [Results & Accuracy](#results--accuracy)
-- [Screenshots](#screenshots)
-- [Contributing](#contributing)
-- [License](#license)
-- [Author](#author)
+- **Dataset Used:** [MRL Eye Dataset](https://www.kaggle.com/datasets/akashshingha850/mrl-eye-dataset) (85,000+ images, **too large to include in this repo**)
+- **Live Demo:** Coming soon
+- **Report Issues:** [GitHub Issues](https://github.com/abhii981/driver-drowsiness-system/issues)
 
 ---
 
-## 🎯 Overview
+## 🎯 What This Project Does
 
-This project detects driver drowsiness in real-time using a **Deep Learning CNN model** trained on eye images. It monitors eye state (Open/Closed), calculates PERCLOS (Percentage of Eye Closure), and triggers audio-visual alerts when drowsiness is detected.
+This system monitors a driver's eyes in real-time using a webcam. When it detects signs of drowsiness (like prolonged eye closure), it triggers both visual and audio alerts to warn the driver.
 
-The system uses:
-- **OpenCV** for face and eye detection
-- **TensorFlow/Keras** for eye state classification
-- **WebSocket** for real-time video streaming
-- **Custom HTML/CSS/JS UI** for monitoring
+The core idea is simple: **if your eyes stay closed for more than a couple of seconds, you're probably too tired to drive.**
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
-| Feature | Description |
-|---------|-------------|
-| 🎥 **Real-time Detection** | Processes webcam feed at 30 FPS |
-| 🧠 **Deep Learning Model** | CNN with 82.45% validation accuracy |
-| 👁️ **Eye State Classification** | Detects Open/Closed eyes |
-| 📊 **PERCLOS Tracking** | Monitors percentage of eye closure |
-| 😉 **Blink Detection** | Ignores quick blinks (< 0.5 seconds) |
-| 🔊 **Audio Alert** | Plays alarm sound when drowsy |
-| 🚨 **Visual Alert** | Red banner with flashing effect |
-| 🖥️ **Custom Web UI** | Real-time metrics dashboard |
-| ⚙️ **Adjustable Settings** | EAR threshold and sensitivity controls |
-| 📈 **Live Metrics** | EAR, PERCLOS, Drowsiness Score |
+- **Real-time eye tracking** using your webcam
+- **Deep learning model** (82.45% accuracy) to tell if eyes are open or closed
+- **PERCLOS scoring** (percentage of time eyes are closed) as a fatigue metric
+- **Blink detection** that ignores quick blinks and only alerts on sustained closure
+- **Audio + visual alerts** when drowsiness is detected
+- **Web-based dashboard** showing live metrics (EAR, PERCLOS, etc.)
+- **Adjustable sensitivity** settings
+- **WebSocket streaming** for low-latency video
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ How It's Built
 
 ### Backend
-- **Python 3.10+**
-- **TensorFlow/Keras** - Deep Learning
-- **OpenCV** - Face and eye detection
-- **NumPy** - Numerical operations
+- Python with TensorFlow/Keras for the deep learning model
+- OpenCV for face and eye detection
+- Node.js with WebSocket for real-time communication
 
 ### Frontend
-- **HTML5** - Structure
-- **CSS3** - Styling with gradients and animations
-- **JavaScript** - Real-time updates
-- **WebSocket** - Video streaming
-
-### Server
-- **Node.js** - HTTP server
-- **Express** - Static file serving
-- **ws** - WebSocket server
+- Plain HTML, CSS, and JavaScript
+- Live metrics dashboard
+- Responsive design
 
 ---
 
 ## 📂 Project Structure
 
+Here's what the codebase looks like:
+
 ```
 driver-drowsiness-system/
-│
-├── public/                          # Frontend files
-│   ├── audio/
-│   │   └── alarm.mp3               # Alert sound
-│   ├── css/
-│   │   └── style.css               # UI styling
-│   ├── js/
-│   │   └── main.js                 # Frontend logic
-│   └── index.html                  # Main UI page
-│
-├── detector_ws.py                   # Main detection engine
-├── eye_classifier.py                # DL model class
-├── train_small.py                   # Model training script
-├── server.js                        # Node.js server
-├── requirements.txt                 # Python dependencies
-├── package.json                     # Node dependencies
-├── .gitignore                       # Git ignore rules
-└── README.md                        # Documentation
+├── public/              # Web interface files
+│   ├── audio/alarm.mp3  # Alert sound
+│   ├── css/style.css
+│   ├── js/main.js
+│   └── index.html
+├── detector_ws.py       # Main detection logic
+├── eye_classifier.py    # Model loading/prediction
+├── train_small.py       # Training script
+├── server.js            # Node.js server
+├── requirements.txt     # Python dependencies
+└── package.json         # Node dependencies
 ```
 
 ---
 
-## 🚀 Installation
+## 🚀 Getting Started
 
-### 1️⃣ Clone the Repository
+### Prerequisites
+- Python 3.10+
+- Node.js 18+
+- A webcam
+
+### Installation Steps
+
+**1. Clone the repository:**
 ```bash
 git clone https://github.com/abhii981/driver-drowsiness-system.git
 cd driver-drowsiness-system
 ```
 
-### 2️⃣ Set Up Python Virtual Environment
+**2. Set up a Python virtual environment:**
 ```bash
-# Create virtual environment
 python -m venv tf_env
-
-# Activate (Windows)
+# On Windows:
 tf_env\Scripts\activate
-
-# Activate (Mac/Linux)
+# On Mac/Linux:
 source tf_env/bin/activate
 ```
 
-### 3️⃣ Install Python Dependencies
+**3. Install Python dependencies:**
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4️⃣ Install Node.js Dependencies
+**4. Install Node.js dependencies:**
 ```bash
 npm install
 ```
 
-### 5️⃣ Train the Model (Optional)
-If you want to train your own model on a dataset:
+**5. (Optional) Train the model:**
 ```bash
 python train_small.py
 ```
+*Note: This uses a small sample dataset. For full training, download the [MRL Eye Dataset](https://www.kaggle.com/datasets/akashshingha850/mrl-eye-dataset).*
 
-### 6️⃣ Run the Application
+**6. Start the application:**
 ```bash
 node server.js
 ```
 
-### 7️⃣ Open Browser
+**7. Open your browser and go to:**
 ```
 http://localhost:3000
 ```
 
 ---
 
-## 🔬 How It Works
+## 🔬 How Detection Works
 
-### Detailed Flow:
-
-1. **Face Detection** → OpenCV Haar Cascade detects face
-2. **Eye Extraction** → Extracts eye regions from face
-3. **Deep Learning** → CNN classifies eyes as Open/Closed
-4. **PERCLOS Tracking** → Tracks percentage of eye closure over 30 frames
-5. **Blink Logic** → Ignores quick blinks (threshold: 15 frames ≈ 0.5-0.7 seconds)
-6. **Alert Trigger** → Visual banner + audio alarm when drowsy
+1. **Face detection** – OpenCV locates your face in the camera feed
+2. **Eye extraction** – The system crops out just the eye regions
+3. **Eye state classification** – A CNN predicts if each eye is open or closed
+4. **PERCLOS calculation** – Tracks the percentage of closed-eye frames over time
+5. **Blink handling** – Quick blinks (<0.5 seconds) are ignored
+6. **Alert trigger** – Sustained eye closure triggers a warning
 
 ---
 
-## 🧪 Testing
+## 🧪 Testing Guide
 
-### To test the system:
+| What you do | What you should see |
+|-------------|---------------------|
+| Keep eyes open | "OPEN" (green) – no alert |
+| Quick blink | "BLINKING" (orange) – no alert |
+| Close eyes for 2+ seconds | "SLEEPY" (red) – alert triggers! |
 
-| Action | Expected Result |
-|--------|-----------------|
-| **Open eyes normally** | Shows "👁️ OPEN" (Green) → No alert |
-| **Quick blink** | Shows "😉 BLINKING" (Orange) → No alert |
-| **Close eyes for 2+ seconds** | Shows "😴 SLEEPY" (Red) → Alert triggers! |
-
-### Test Sound:
-```bash
-python test_sound.py
-```
-
-### Test Camera:
-```bash
-python test_camera.py
-```
+### Helper Scripts
+- `python test_camera.py` – Check if your webcam works
+- `python test_sound.py` – Test the alarm sound
 
 ---
 
-## 📊 Model Training
+## 📊 Model & Dataset
 
-### Dataset: MRL Eye Dataset
-- **85,000+** images of human eyes
-- **Train/Val/Test** split: 60/20/20
-- **Classes**: Awake (Open) and Sleepy (Closed)
+### Dataset
+- **Source:** [MRL Eye Dataset](https://www.kaggle.com/datasets/akashshingha850/mrl-eye-dataset)
+- **Size:** 85,000+ images of eyes (open and closed states)
+- **Note:** This dataset is **too large to include directly** in this repository. Download it from Kaggle if you want to retrain the model.
 
-### Training Results
-
-| Dataset | Accuracy |
-|---------|----------|
-| **Small Dataset (2,000 images)** | **82.45%** |
-| **Best Validation** | **86.55%** |
-
-### Training Command
-```bash
-python train_small.py
-```
-
-### Data Preprocessing (Optional)
-```bash
-python preprocess_data.py
-```
+### Model Performance
+- **Validation accuracy:** 82.45%
+- **Best recorded validation accuracy:** 86.55%
+- **Training data:** 2,000 sample images (subset)
 
 ---
 
-## 📸 Screenshots
+## 🧠 Why I Built This
 
-### UI Dashboard
-![UI Dashboard](screenshots/dashboard.png)
+I noticed that most driver fatigue systems are either expensive or rely on external hardware. This project is my attempt to build an accessible, webcam-based alternative using open-source tools.
 
-### Alert Triggered
-![Alert](screenshots/alert.png)
+### Challenges & Lessons Learned
 
-### Metrics Panel
-![Metrics](screenshots/metrics.png)
+The biggest challenge was balancing accuracy with performance. Running a deep learning model on a CPU while maintaining 30 FPS video streaming required careful optimization, including reducing the model size and using WebSocket for efficient data transfer.
+
+---
+
+## 🔜 Future Improvements
+
+- Train on the full MRL dataset for higher accuracy
+- Add mobile app support
+- Integrate with smartwatch heart rate data
+- Implement facial recognition for driver identification
+- Add drowsiness history logging
 
 ---
 
 ## 🤝 Contributing
 
-Pull requests are welcome! For major changes, please open an issue first.
+Found a bug or have an idea? Feel free to open an issue or submit a pull request.
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
+2. Create a feature branch (`git checkout -b feature/YourFeature`)
+3. Commit your changes (`git commit -m 'Add YourFeature'`)
+4. Push to the branch (`git push origin feature/YourFeature`)
 5. Open a Pull Request
 
 ---
 
 ## 📝 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 👨‍💻 Author
+## 👤 Author
 
-**Abhishek**
-
+**Abhinandan**
 - GitHub: [@abhii981](https://github.com/abhii981)
-- Project Link: [https://github.com/abhii981/driver-drowsiness-system](https://github.com/abhii981/driver-drowsiness-system)
+- Project Link: [driver-drowsiness-system](https://github.com/abhii981/driver-drowsiness-system)
 
 ---
 
-## 🙏 Acknowledgments
+## 🙏 Credits
 
-- [MRL Eye Dataset](https://www.kaggle.com/datasets/kayvanshah/eye-dataset) - Dataset used for training
-- [TensorFlow](https://www.tensorflow.org/) - Deep Learning framework
-- [OpenCV](https://opencv.org/) - Computer Vision library
-
----
-
-## ⭐ Star the Project!
-
-If you found this helpful, please give it a ⭐ on GitHub!
+- [MRL Eye Dataset](https://www.kaggle.com/datasets/akashshingha850/mrl-eye-dataset) for the training data
+- TensorFlow, OpenCV, and MediaPipe for making computer vision accessible
 
 ---
 
-**Made with ❤️ for safer roads 🚗**
+## ⭐ Support This Project
+
+If you found this useful, please consider **starring** the repository on GitHub. It helps others discover the project!
+
+---
+
+**Made with 💻 and ☕ for safer roads** 🚗
